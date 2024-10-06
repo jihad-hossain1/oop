@@ -12,7 +12,6 @@ class UniPerson extends Person {
         this[_account] = null;
     }
 
-
     get department() {
         return this[_department];
     }
@@ -29,9 +28,8 @@ class UniPerson extends Person {
         this[_account] = value;
     }
 
-    toString(){
-        super.toString();
-        console.log(`Department: ${this[_department]}, Account: ${this[_account]}`)
+    toString() {
+        return(`${super.toString()}, Department: ${this[_department]}, Account: ${this[_account]}`)
     }
 
 }
