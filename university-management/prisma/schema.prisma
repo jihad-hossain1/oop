@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,71 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Address {
+  id         String  @id @default(uuid()) // Use UUID for string id
+  region     String? @db.VarChar(100)
+  city       String? @db.VarChar(100)
+  country    String? @db.VarChar(100)
+  roadNo     String? @db.VarChar(100)
+  postalCode String? @db.VarChar(100)
+
+  // Relation fields
+  contact Contact? // Address can be related to a Contact
+}
+
+model Contact {
+  id               String  @id @default(uuid()) // Use UUID for string id
+  email            String? @db.VarChar(100)
+  phone            String? @db.VarChar(100)
+  alternativePhone String? @db.VarChar(100)
+  addressId        String? @unique // Reference to Address id
+
+  // Relations
+  address Address? @relation(fields: [addressId], references: [id])
+  person  Person? // Contact can be linked to a Person
+}
+
+model Person {
+  id    String  @id @default(uuid()) // Use UUID for string id
+  name  String  @db.VarChar(100)
+  blood String? @db.VarChar(20)
+
+  // Foreign key relation to Contact
+  contactId String?  @unique
+  contact   Contact? @relation(fields: [contactId], references: [id])
+
+  // Relations with Employee and Guardian
+  Employee Employee[]
+  Guardian Guardian[]
+}
+
+model UniPerson {
+  id         String  @id @default(uuid()) // Use UUID for string id
+  name       String  @db.VarChar(100)
+  department String? @db.VarChar(100)
+  account    String? @db.VarChar(100)
+}
+
+model Employee {
+  id         String @id @default(uuid()) // Use UUID for string id
+  name       String @db.VarChar(100)
+  employeeID String
+  salary     Float  @default(0)
+
+  // Foreign key to Person
+  personId String
+  person   Person @relation(fields: [personId], references: [id])
+}
+
+model Guardian {
+  id         String @id @default(uuid()) // Use UUID for string id
+  name       String @db.VarChar(100)
+  profession String @db.VarChar(100)
+  income     Float  @default(0)
+
+  // Foreign key to Person
+  personId String
+  person   Person @relation(fields: [personId], references: [id])
 }
